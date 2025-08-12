@@ -1,17 +1,20 @@
-import fastify from "fastify";
+import express from "express";
 import cors from "cors";
 
-const app = fastify();
+const app = express();
+const port = 3000;
 
-app.get("/", async (request, reply) => {
-    reply.send({ success: true, statuscode: 200, body: "Welcome to MyGastronomy" });
+app.use(express.json());
+app.use(cors());
+
+app.get("/", (req, res) => {
+    res.send({
+        success: true,
+        statusCode: 200,
+        body: "Olá mundo, essa é a rota GET!",
+    });
 });
 
-app.listen({ port: 3000 })
-    .then(() => {
-        console.log("Server is running on http://localhost:3000");
-    })
-    .catch((err) => {
-        console.error("Error starting server:", err);
-        process.exit(1);
-    });
+app.listen(port, () => {
+    console.log(`Server running on: http://localhost:${port}`);
+});
