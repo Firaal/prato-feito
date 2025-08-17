@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { Mongo } from "../database/mongo.js";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongodb";
+import { error } from "console";
 
 const collectionName = "users";
 
@@ -62,6 +63,44 @@ authRouter.post("/signup", async (req, res) => {
             });
         }
     });
+});
+
+authRouter.post("/login", (req, res) => {
+    passport.authenticate("local", (error, user) => {
+        if (error) {
+            return res.status(500).send({
+                success: false,
+                statusCode: 500,
+                body: {
+                    text: "Error during authetication",
+                    error,
+                },
+            });
+        }
+
+        if (!user) {
+            return res.status(400).send({
+                success: false,
+                statusCode: 400,
+                body: {
+                    text: "Error not found",
+                    error,
+                },
+            });
+        }
+
+        const token = jwt.sign(user, "secret");
+
+        return res.status(200).send({
+            success: true,
+            statusCode: 200,
+            body: {
+                text: "User logged correctly",
+                user,
+                token,
+            },
+        });
+    })(req, res);
 });
 
 passport.use(
